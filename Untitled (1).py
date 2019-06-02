@@ -7,9 +7,10 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression, Ridge,  BayesianRidge, LogisticRegression
-from sklearn.svm import SVR
+from sklearn.svm import SVR, SVC
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 import requests
 import math
 from sklearn.ensemble import GradientBoostingClassifier
@@ -94,7 +95,8 @@ for ids in match_ids:
     predict = df[df[0] == ids]
     train_x = train.iloc[:,1:6].values.reshape(-1,5)
     train_y = train.iloc[:,6].values.reshape(-1,1)
-    model =  GaussianProcessRegressor()
+    print("training model {}".format(h))
+    model =  MLPClassifier(activation='tanh',hidden_layer_sizes=(5,5,5,1))
     model.fit(train_x, train_y)
     print("model {} trained".format(h))
     h = h+ 1
@@ -118,7 +120,7 @@ for ids in match_ids:
                 speed = distance
             
             inputs = np.array([x,y,angle, distance, speed]).reshape(1,5)
-            chance = model.predict(inputs)[0][0]
+            chance = model.predict_proba(inputs)[0][0]
             if chance > 1:
                 chance = 1
             
@@ -238,6 +240,7 @@ all_players.pop('index')
 all_players.head()
 
 
+all_players.to_csv('player_stats.csv')
 # In[ ]:
 
 
